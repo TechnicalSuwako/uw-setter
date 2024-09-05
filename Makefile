@@ -32,19 +32,28 @@ PREFIX = /usr
 CC = c++
 FILES = main.cc
 
-CFLAGS = -Wall -Wextra -Wno-non-c-typedef-for-linkage -O3 -I/usr/include -L/usr/lib
+.if ${OS} == "openbsd"
+DEPS = pkg_add fltk jpeg png
+.elif ${OS} == "netbsd"
+DEPS = pkgin install fltk libjpeg-turbo png
+.endif
+
+CFLAGS = -Wall -Wextra -Wno-non-c-typedef-for-linkage -I/usr/include -L/usr/lib
 .if ${OS} == "freebsd" || ${OS} == "openbsd" || ${OS} == "netbsd" || ${OS} == "dragonfly
 CFLAGS += -I/usr/local/include -L/usr/local/lib
 .endif
 .if ${OS} == "netbsd"
-CFLAGS += -I/usr/X11R7/include -L/usr/X11R7/lib
+CFLAGS += -I/usr/X11R7/include -L/usr/X11R7/lib -I/usr/pkg/include -L/usr/pkg/lib
 .elif ${OS} == "openbsd"
 CFLAGS += -I/usr/X11R6/include -L/usr/X11R6/lib
 .endif
 
 LDFLAGS = -lfltk -lfltk_images -lX11
-SLIB = -lc++
+.if ${OS} == "netbsd"
+LDFLAGS += -lpng16 -ljpeg
+.endif
 
+SLIB = -lc++
 .if ${OS} == "openbsd"
 SLIB = -lc++abi -lpthread -lm -lc \
 			 -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lXdmcp -lXau \
@@ -53,18 +62,22 @@ SLIB = -lc++abi -lpthread -lm -lc \
 SLIB = -lcxxrt -lm -lgcc -lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig\
 			 -lXinerama -lthr -lpng16 -lz -ljpeg -lxcb -lfreetype -lexpat -lXau -lXdmcp\
 			 -lbz2 -lbrotlidec -lbrotlicommon
+.elif ${OS} == "netbsd"
+SLIB = -lstdc++ -lpthread -lm -lc -lXft -lxcb -lfontconfig -lfreetype\
+			 -lXau -lXdmcp -lXcursor -lXrandr -lXext -lXrender -lXfixes -lXinerama -lX11\
+			 -lexpat -lz -lbz2 -lgcc
 .endif
 
 all:
-	${CC} ${CFLAGS} -o ${NAME} ${FILES} -static ${LDFLAGS} ${SLIB}
+	${CC} -O3 ${CFLAGS} -o ${NAME}\
+		${FILES} -static ${LDFLAGS} ${SLIB}
 	strip ${NAME}
 
+depend:
+	${DEPS}
+
 debug:
-	${CC} -Wall -Wextra -g -I/usr/include -L/usr/lib \
-		-I/usr/local/include -L/usr/local/lib \
-		-I/usr/X11R6/include -L/usr/X11R6/lib \
-		-I/usr/X11R7/include -L/usr/X11R7/lib \
-		-o ${NAME} ${FILES} ${LDFLAGS}
+	${CC} -g ${CFLAGS} -o ${NAME} ${FILES} ${LDFLAGS}
 
 clean:
 	rm -rf ${NAME}
