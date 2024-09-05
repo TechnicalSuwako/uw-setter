@@ -43,9 +43,17 @@ CFLAGS += -I/usr/X11R6/include -L/usr/X11R6/lib
 .endif
 
 LDFLAGS = -lfltk -lfltk_images -lX11
-SLIB = -lc++ -lc++abi -lpthread -lm -lc \
+SLIB = -lc++
+
+.if ${OS} == "openbsd"
+SLIB = -lc++abi -lpthread -lm -lc \
 			 -lXcursor -lXfixes -lXext -lXft -lfontconfig -lXinerama -lXdmcp -lXau \
 			 -lpng -lz -ljpeg -lxcb -lXrender -lexpat -lfreetype
+.elif ${OS} == "freebsd"
+SLIB = -lcxxrt -lm -lgcc -lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig\
+			 -lXinerama -lthr -lpng16 -lz -ljpeg -lxcb -lfreetype -lexpat -lXau -lXdmcp\
+			 -lbz2 -lbrotlidec -lbrotlicommon
+.endif
 
 all:
 	${CC} ${CFLAGS} -o ${NAME} ${FILES} -static ${LDFLAGS} ${SLIB}
