@@ -68,6 +68,10 @@ SLIB = -lcxxrt -lm -lgcc -lXrender -lXcursor -lXfixes -lXext -lXft -lfontconfig\
 SLIB = -lstdc++ -lpthread -lm -lc -lXft -lxcb -lfontconfig -lfreetype\
 			 -lXau -lXdmcp -lXcursor -lXrandr -lXext -lXrender -lXfixes -lXinerama -lX11\
 			 -lexpat -lz -lbz2 -lgcc
+.elif ${OS} == "linux"
+SLIB = -lstdc++ -lgcc -lc -lXft -lXext -lXrender -lfontconfig -lXinerama\
+			 -lpng16 -lz -ljpeg -lxcb -lfreetype -lexpat -lXau -lXdmcp -lbz2\
+			 -lbrotlidec -lbrotlicommon
 .endif
 
 all:
