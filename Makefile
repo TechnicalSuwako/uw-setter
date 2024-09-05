@@ -15,7 +15,7 @@ OS = dragonfly
 OS = linux
 .endif
 
-.if ${UNAME_M} == "X86_64
+.if ${UNAME_M} == "x86_64"
 ARCH = amd64
 .endif
 
@@ -91,14 +91,14 @@ clean:
 dist:
 	mkdir -p ${NAME}-${VERSION} release/src
 	cp -R LICENSE.txt Makefile README.md CHANGELOG.md\
-		main.c src ${NAME}-${VERSION}
+		main.cc ${NAME}-${VERSION}
 	tar zcfv release/src/${NAME}-${VERSION}.tar.gz ${NAME}-${VERSION}
 	rm -rf ${NAME}-${VERSION}
 
 release:
 	mkdir -p release/bin/${VERSION}/${OS}/${ARCH}
-	${CC} ${CFLAGS} -o release/bin/${VERSION}/${OS}/${ARCH}/${NAME} ${FILES}\
-		-static ${LDFLAGS}
+	${CC} -O3 ${CFLAGS} -o release/bin/${VERSION}/${OS}/${ARCH}/${NAME} ${FILES}\
+		-static ${LDFLAGS} ${SLIB}
 	strip release/bin/${VERSION}/${OS}/${ARCH}/${NAME}
 
 install:
