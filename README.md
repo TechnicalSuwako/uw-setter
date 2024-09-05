@@ -2,9 +2,8 @@
 GUIで使ってuwをコントロール出来る
 
 ## インストールする方法 | Installation
-### OpenBSD
 ```sh
-doas pkg_add fltk
+doas make depends
 make
 doas make install
 ```

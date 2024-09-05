@@ -36,6 +36,8 @@ FILES = main.cc
 DEPS = pkg_add fltk jpeg png
 .elif ${OS} == "netbsd"
 DEPS = pkgin install fltk libjpeg-turbo png
+.elif ${OS} == "freebsd"
+DEPS = pkg install fltk libjpeg-turbo png
 .endif
 
 CFLAGS = -Wall -Wextra -Wno-non-c-typedef-for-linkage -I/usr/include -L/usr/lib
